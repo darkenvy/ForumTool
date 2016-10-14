@@ -1,16 +1,32 @@
 var isDayLightSaving = true;
 
-// top level forum
-var threads = $('.forum-stat--latest');
+var currentPageIsTop = $('.forum-stat--latest').length > 0 ? true : false; // resolve by looking at the length of a jquery list
+var topLevelRegex = /(\d+)\/(\d+)\/(\d+)\s(\d+):(\d+)/ // Regex for the top level time format. Because Date() doens't like the current format
+var threads;
 var currTime = new Date();
+var properParentElement = function() {
+  return;
+}
 
 for (var i=0; i<threads.length; i++) {
-  // console.log(threads[i].innerText);
-  var parseDate = threads[i].innerText.match(/(\d+)\/(\d+)\/(\d+)\s(\d+):(\d+)/);
-  var threadDate = new Date('20' + parseDate[3], parseDate[2]-1, parseDate[1], parseDate[4], parseDate[5]); // Gets GMT date
-  threadDate = new Date(threadDate - (( (new Date().getTimezoneOffset() + (isDayLightSaving*60) ) * 60) * 1000)); // converts to current time zone specific to user
+  var parseDate;
+  var threadDate;
 
+  // If the forum is the top level, then prepare the dates a certain way.
+  // Else, prepare it another way
+  if (currentPageIsTop) {
+    threads = $('.forum-stat--latest');
+    parseDate = threads[i].innerText.match(topLevelRegex);
+    threadDate = new Date('20' + parseDate[3], parseDate[2]-1, parseDate[1], parseDate[4], parseDate[5]); // Gets GMT date
+  } else {
+    threads = $('.thread-plate__last-post-time');
+    threadDate = new Date(threads[i].innerText); // Gets GMT date
+  }
+  // Finish date fixing. Brings GMT time equal to current time zone time.
+  threadDate = new Date(threadDate - (( (new Date().getTimezoneOffset() + (isDayLightSaving*60) ) * 60) * 1000)); // converts to current time zone specific to user
   var minutesAgo = parseInt((new Date().valueOf() - threadDate.valueOf()) / 1000 / 60);
+  
+  // Do the magic now
   if (minutesAgo >=10080) { //week
     threads[i].innerText = parseInt(minutesAgo/10080) + " weeks Ago";
     $(threads[i]).css({color:'darkred'})
