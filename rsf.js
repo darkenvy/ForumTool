@@ -17,6 +17,10 @@ if (currentPageIsTop) {
   threads = $('.thread-plate__last-post-time');
 }
 
+// +----------------------+---------------+----------------------+ //
+// |~~~~~~~~~~~~~~~~~~~~~~| FORUM THREADS |~~~~~~~~~~~~~~~~~~~~~~| //
+// +----------------------+---------------+----------------------+ //
+
 // Make sure there are threads to iterate through. If there are, then
 // we must be on a thread listing page. Else, we must be on a post page.
 if (threads.length > 0) {
@@ -74,21 +78,29 @@ if (threads.length > 0) {
       setParentElemColor(threads[i], {background:'rgba(144, 234, 159, 0.1)'} )
     } 
   }
-} else if ($('.forum-post__body') > 0) {
-  // If we couldn't find any threads to colorize,
-  // but we found forum post bodies...
+} 
+
+// +----------------------+---------------+----------------------+ //
+// |~~~~~~~~~~~~~~~~~~~~~~| THREAD  POSTS |~~~~~~~~~~~~~~~~~~~~~~| //
+// +----------------------+---------------+----------------------+ //
+
+// If we couldn't find any threads to colorize,
+// but we found forum post bodies...
+else if ($('.forum-post__body').length > 0) {
   var posts = $('.forum-post__body');
 
   if (posts.length > 0) {
     for (var i=0; i<posts.length; i++) {
+
       // Replace all links with inline IMG tags (to render them)
       posts[i].innerHTML = posts[i].innerHTML.replace(/(.*)(http.+?(?:png|jpg|jpeg|bmp|gif|tif|gif))(.*)/, function(match, p1, p2, p3) {
         return p1 + "<img src='" + p2 + "' style='max-width: 670px;'>" + p3;
       });
+
       
+
     }
 
   }
 
 }
-
