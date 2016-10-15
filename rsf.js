@@ -35,7 +35,7 @@ if (threads.length > 0) {
       $(thread.parentElement).css(cssToAppend); // Sets right child's color
       $($(thread)[0].parentElement.parentElement.children[0]).css(cssToAppend); // sets left child's color
     }
-  }
+  };
 
   // Loop through each thread, look at the time, fix the time and color the thread
   for (var i=0; i<threads.length; i++) {
@@ -58,24 +58,24 @@ if (threads.length > 0) {
     // Look at the minutes, determine what to do based on that. 
     if (minutesAgo >=10080) { //week
       threads[i].innerText = parseInt(minutesAgo/10080) + " weeks Ago";
-      $(threads[i]).css({color:'darkred'}) // Set text color
-      setParentElemColor(threads[i], {background:'rgba(109,0,75,0.2)'} )
+      $(threads[i]).css({color:'darkred'}); // Set text color
+      setParentElemColor(threads[i], {background:'rgba(109,0,75,0.2)'} );
     } else if (minutesAgo >= 1440) { //day
       threads[i].innerText = parseInt(minutesAgo/1440) + " days Ago";
-      $(threads[i]).css({color:'orange'})
-      setParentElemColor(threads[i], {background:'rgba(191, 89, 89, 0.2)'} )
+      $(threads[i]).css({color:'orange'});
+      setParentElemColor(threads[i], {background:'rgba(191, 89, 89, 0.2)'} );
     } else if (minutesAgo >= 60) { //hour
       threads[i].innerText = parseInt(minutesAgo/60) + " hours Ago";
-      $(threads[i]).css({color:'yellow'})
-      setParentElemColor(threads[i], {background:'rgba(234,234,145,0.2)'} )
+      $(threads[i]).css({color:'yellow'});
+      setParentElemColor(threads[i], {background:'rgba(234,234,145,0.2)'} );
     } else if (minutesAgo < 1) { //less than a minute
       threads[i].innerText = "Now";
-      $(threads[i]).css({color:'green'})
-      setParentElemColor(threads[i], {background:'rgba(144, 234, 159, 0.1)'} )
+      $(threads[i]).css({color:'green'});
+      setParentElemColor(threads[i], {background:'rgba(144, 234, 159, 0.1)'} );
     } else if (minutesAgo < 60) { //minute
       threads[i].innerText = minutesAgo + " mins Ago";
-      $(threads[i]).css({color:'green'})
-      setParentElemColor(threads[i], {background:'rgba(144, 234, 159, 0.1)'} )
+      $(threads[i]).css({color:'green'});
+      setParentElemColor(threads[i], {background:'rgba(144, 234, 159, 0.1)'} );
     } 
   }
 } 
@@ -92,12 +92,24 @@ else if ($('.forum-post__body').length > 0) {
   if (posts.length > 0) {
     for (var i=0; i<posts.length; i++) {
 
-      // Replace all links with inline IMG tags (to render them)
-      posts[i].innerHTML = posts[i].innerHTML.replace(/(.*)(http.+?(?:png|jpg|jpeg|bmp|gif|tif|gif))(.*)/, function(match, p1, p2, p3) {
-        return p1 + "<img src='" + p2 + "' style='max-width: 670px;'>" + p3;
+      // My crude way to determine if the image link is already a img tag or not. 
+      // I compare if the preceding string ends with ="
+      var replacedText = posts[i].innerHTML.replace(/(.*)(http.+?(?:png|jpg|jpeg|bmp|gif|tif|gif))(.*)/, function(match, p1, p2, p3) {
+        if (p1.slice(p1.length-2, p1.length) != '="' ) {return p1 + "<img src='" + p2 + "' style='max-width: 670px;'>" + p3;}
       });
 
-      
+      // This is a seperate regex because I couldn't capture Gyazo links in the same regex
+      // WIP: I have no idea whats going on with the links. They seemt to not be clickable.
+      var replacedText = posts[i].innerHTML.replace(/(.*)(http.+?gyazo\.com\/[^<]+)(.*)/, function(match, p1, p2, p3) {
+        if (p1.slice(p1.length-2, p1.length) != '="' ) {return p1 + "<a src='" + p2 + "'>" + p2 + "</a>" + p3;}
+      });
+
+      if (replacedText !== "undefined") { 
+        console.log('inside reptext',i, replacedText);
+        posts[i].innerHTML = replacedText; 
+      }
+
+
 
     }
 
